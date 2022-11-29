@@ -6,6 +6,7 @@ public class Main {
         
         int tamMax = 300;
         int numLinhas = 0;
+        int numLinhasAtiva = 0;
         int count = 0;
         String[] linhas = new String[tamMax];
         int[] numPalavras = new int[tamMax];
@@ -22,7 +23,7 @@ public class Main {
             System.out.println("*\t(F)erramentas");
             System.out.println("*\t(S)air");
             System.out.println("**************************************************************");
-            System.out.print("*==<Principal> ");
+            System.out.print("*<Principal> ");
             opcao = new Scanner(System.in).next();
             System.out.println("\n\n\n\n");
             System.out.println("**************************************************************");
@@ -43,6 +44,7 @@ public class Main {
                             numChars[numLinhas] = linha.replaceAll(" ", "").length();
                             apagadas[numLinhas] = false;
                             numLinhas++;
+                            numLinhasAtiva++;
                             numLinhasInseridas++;
                         } else {
                             break;
@@ -53,14 +55,7 @@ public class Main {
                 case "l":
                     System.out.println("** LISTAR LINHAS");
                     System.out.println("**************************************************************");
-                    int ttLinhasApagadas = 0;
-                    for (int i = 0; i < apagadas.length; i++) {
-                        if (apagadas[i]) {
-                            ttLinhasApagadas++;
-                        }
-                    }
-                    int ttLinhasAtivas = numLinhas - ttLinhasApagadas;
-                    String[] linhasAtivas = new String[ttLinhasAtivas];
+                    String[] linhasAtivas = new String[numLinhasAtiva];
                     count = 0;
                     for (int i = 0; i < numLinhas; i++) {
                         if (!apagadas[i]) {
@@ -73,16 +68,21 @@ public class Main {
                 case "a":
                     System.err.println("** APAGAR ULTIMA LINHA");
                     System.out.println("**************************************************************");
-                    int ttLinhasApagadas2 = 0;
-                    for (int i = 0; i < apagadas.length; i++) {
-                        if (apagadas[i]) {
-                            ttLinhasApagadas2++;
+                    
+                    for (int i = numLinhas; i >= 0; i--) {
+                        if (!apagadas[i-1]) {
+                            apagadas[i-1] = true;
+                            numLinhasAtiva--;
+
+                            System.out.println("*\t\tA ultima linha foi apagada");
+                            System.out.println("**************************************************************");
+
+                            // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                            System.out.print("\n\n\nPrima ENTER para continuar...");
+                            new Scanner(System.in).nextLine();
+                            break;
                         }
                     }
-                    int ttLinhasAtivas2 = numLinhas - ttLinhasApagadas2;
-                    String[] linhasAtivas2 = new String[ttLinhasAtivas2];
-                    System.out.println("*");
-                    System.out.println("**************************************************************");
                     break;
                 case "e": {
                     String menuEditar = "";
@@ -96,7 +96,7 @@ public class Main {
                         System.out.println("**\t(E)liminar linhas apagadas");
                         System.out.println("**\t(V)oltar");
                         System.out.println("**************************************************************");
-                        System.out.print("**=<Editar> ");
+                        System.out.print("**<Editar> ");
                         menuEditar = new Scanner(System.in).next();
                         System.out.println("\n\n\n\n");
                         System.out.println("**************************************************************");
@@ -105,27 +105,186 @@ public class Main {
                             case "i":
                                 System.out.println("*** INSERIR LINHA");
                                 System.out.println("**************************************************************");
-
+                                System.err.println("***>    Insira o número da linha que pretendes editar     <***");
+                                System.out.print("* Linha Nº: ");
+                                
+                                int nLinha = new Scanner(System.in).nextInt();
+                                int verifica = 0;
+                                
+                                if (nLinha > 0 && nLinha <= numLinhasAtiva) {
+                                    for (int i = 0; i < numLinhas; i++){
+                                        if (!apagadas[i]) {
+                                            verifica++;
+                                            if (verifica == nLinha) {
+                                                String texto = new Scanner(System.in).nextLine();
+                                                linhas[nLinha - 1] = texto;
+                                                numPalavras[nLinha - 1] = texto.split(" ").length;
+                                                numChars[nLinha - 1] = texto.replaceAll(" ", "").length();
+                                                
+                                                System.out.println("*\n*");
+                                                System.out.println("*\tA linha Nº: "+nLinha+" foi editada com sucesso!");
+                                                System.out.println("**************************************************************");
+                                                
+                                                // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                                System.out.print("\n\n\nPrima ENTER para continuar...");
+                                                new Scanner(System.in).nextLine();
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    System.out.println("*\tO número de linha escolhida não existe.");
+                                    System.out.println("**************************************************************");
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                }
                                 break;
                             case "a":
                                 System.out.println("*** APAGAR LINHA NA POSIÇÃO (n)");
                                 System.out.println("**************************************************************");
-
+                                System.err.println("*\n***>    Insira o número da linha que pretendes apagar     <***");
+                                System.out.print("* Linha Nº: ");
+                                int nLinha2 = new Scanner(System.in).nextInt();
+                                int verifica2 = 0; 
+                                if (nLinha2 > 0 && nLinha2 <= numLinhasAtiva) {
+                                    for (int i = 0; i < numLinhas; i++){
+                                        if (!apagadas[i]) {
+                                            verifica2++;
+                                            if (verifica2 == nLinha2) {
+                                                apagadas[nLinha2 - 1] = true;
+                                                numLinhasAtiva--;
+                                                
+                                                System.out.println("*\n*");
+                                                System.out.println("*\tA linha Nº: "+nLinha2+" foi apagada!");
+                                                System.out.println("**************************************************************");
+                                                
+                                                // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                                System.out.print("\n\n\nPrima ENTER para continuar...");
+                                                new Scanner(System.in).next();
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    System.out.println("*\tO número de linha escolhida não existe.");
+                                    System.out.println("**************************************************************");
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).next();
+                                }
                                 break;
                             case "l":
                                 System.out.println("*** APAGAR LINHAS DA POSIÇÃO (n) ATÉ (m)");
                                 System.out.println("**************************************************************");
+                                System.err.println("*\n***>    Insira o intervalo de linha que pretendes apagar     <***");
+                                System.out.print("* De: ");
+                                int numLinhaN = new Scanner(System.in).nextInt();
+                                System.out.print("* Até: ");
+                                int numLinhaM = new Scanner(System.in).nextInt();
+                                int verifica3 = 0;
+                                count = 0;
+                                if (numLinhaN > 0 && numLinhaN < numLinhaM && numLinhaM < numLinhasAtiva) {
+                                    for (int i = 0; i < numLinhas; i++) {
+                                        if (!apagadas[i]) {
+                                            verifica3++;
+                                            if (verifica3 >= numLinhaN && verifica3 <= numLinhaM) {
+                                                apagadas[i] = true;
+                                                numLinhasAtiva--;
+                                                count++;
+                                            }
+                                        }
+                                    }
 
+                                    if(count > 0){
+                                        System.out.println("*\n*");
+                                        System.out.println("*\tAs linhas de "+numLinhaN+" até "+numLinhaM+" foram apagadas com sucesso");
+                                        System.out.println("**************************************************************");
+                                        
+                                        // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                        System.out.print("\n\n\nPrima ENTER para continuar...");
+                                        new Scanner(System.in).nextLine();
+                                    }
+                                    
+                                } else {
+                                    System.out.println("*\n*");
+                                    System.out.println("*\tO intervalo introduzido é inválido");
+                                    System.out.println("**************************************************************");
+                                    
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                }
                                 break;
                             case "r":
                                 System.out.println("*** RECUPERAR LINHA");
                                 System.out.println("**************************************************************");
+                                for (int i = 0; i < tamMax; i++) {
+                                    if (apagadas[i]) {
+                                        System.out.println("Nº: "+(i+1)+"\t| "+linhas[i]);
+                                    }
+                                }
+                                System.out.println("**************************************************************");
+                                System.out.println("*\n***>           Qual linha pretendes restaurar?            <***");
+                                System.out.print("* Linha Nº: ");
+                                int linhaARestaurar = new Scanner(System.in).nextInt();
+                                
+                                if (linhaARestaurar > 0 && linhaARestaurar <= tamMax && apagadas[linhaARestaurar - 1]) {
+                                    apagadas[linhaARestaurar - 1] = false;
+                                    numLinhasAtiva++;
+                                    System.out.println("*\n*\n*\n**************************************************************");
+                                    System.out.println("*\tLinha restaurada com sucesso");
+                                    System.out.println("**************************************************************");
+                                    
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                } else {
+                                    System.out
+                                            .println("**************************************************************");
+                                    System.out.println("*\tLinha não encontrada");
+                                    System.out
+                                            .println("**************************************************************");
 
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a
+                                    // tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                }
                                 break;
                             case "e":
                                 System.out.println("*** ELIMINAR LINHAS APAGADAS");
                                 System.out.println("**************************************************************");
+                                for (int i = 0; i < tamMax; i++) {
+                                    if (apagadas[i]) {
+                                        System.out.println("Nº: " + (i + 1) + "\t| " + linhas[i]);
+                                    }
+                                }
+                                System.out.println("**************************************************************");
+                                System.out.println("*\n***>     Qual linha pretendes eliminar permanentemente    <***");
+                                System.out.print("*\n* Linha Nº: ");
+                                int linhaAEliminar = new Scanner(System.in).nextInt();
+                                if (linhaAEliminar > 0 && linhaAEliminar <= tamMax && apagadas[linhaAEliminar - 1]) {
+                                    apagadas[linhaAEliminar - 1] = false;
+                                    linhas[linhaAEliminar - 1] = null;
+                                    numChars[linhaAEliminar - 1] = 0;
+                                    numPalavras[linhaAEliminar - 1] = 0;
+                                    numLinhas--;
 
+                                    System.out.println("**************************************************************");
+                                    System.out.println("*\tLinha eliminada com sucesso");
+                                    System.out.println("**************************************************************");
+                                    
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                } else {
+                                    System.out.println("**************************************************************");
+                                    System.out.println("*\tLinha não encontrada");
+                                    System.out.println("**************************************************************");
+                                    
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                }
                                 break;
                             case "v":
                                 break;
@@ -139,7 +298,7 @@ public class Main {
                     } while (!menuEditar.equalsIgnoreCase("v"));
                     break;
                 }
-                case "f":
+                case "f":{
                     String menuFerramentas = "";
                     do {
                         System.out.println("** MENU FERRAMENTAS");
@@ -151,21 +310,80 @@ public class Main {
                         System.out.println("**\tMostrar número de (c)aracteres");
                         System.out.println("**\t(V)oltar");
                         System.out.println("**************************************************************");
-                        System.out.print("**=<Ferramentas> ");
+                        System.out.print("**<Ferramentas> ");
                         menuFerramentas = new Scanner(System.in).next();
                         System.out.println("\n\n\n\n");
                         System.out.println("**************************************************************");
 
                         switch (menuFerramentas.toLowerCase()) {
+
                             case "m":
                                 System.out.println("*** MOSTRAR LINHAS ONDE OCORRERAM A PALAVRA P");
                                 System.out.println("**************************************************************");
-
+                                System.err.println("*\n***>            Qual palavra estas a procurar?          <***");
+                                System.out.print("* Pesquisar: ");
+                                String palavra = new Scanner(System.in).next();
+                                System.out.println("**************************************************************");
+                                count = 0;
+                                for (int i = 0; i < numLinhas; i++) {
+                                    if (!apagadas[i]) {
+                                        String texto = linhas[i];
+                                        if (texto.contains(palavra)) {
+                                            System.out.println((i + 1) + "\t| " + texto);
+                                            count++;
+                                        }
+                                    }
+                                }
+                                
+                                if (count == 0) {
+                                    System.out.println("***>           Nenhuma ocorrência foi encntrada           <***");
+                                    System.out.println("**************************************************************");
+                                    
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                } else {
+                                    System.out.println("*\tEsta palavra ocorre em "+count+" linha(s).");
+                                    System.out.println("\n\n**************************************************************");
+                                    
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                }
                                 break;
                             case "s":
                                 System.out.println("*** SUBSTITUIR A PALAVRA P");
                                 System.out.println("**************************************************************");
-
+                                System.err.println("*\n***>         Qual palavra pretendes substituir?         <***");
+                                System.out.print("* Subtituir: ");
+                                String palavra2 = new Scanner(System.in).next();
+                                System.out.print("* Para: ");
+                                String palavra2Aux = new Scanner(System.in).next();
+                                System.out.println("**************************************************************");
+                                count = 0;
+                                for (int i = 0; i < numLinhas; i++) {
+                                    if (!apagadas[i]) {
+                                        linhas[i].replaceAll(palavra2, palavra2Aux);
+                                        System.out.println((i + 1) + "\t| " + linhas[i]);
+                                        count++;
+                                    }
+                                } 
+                                if (count > 0) {
+                                    System.out.println("\n\n**************************************************************");
+                                    System.out.println("*\tEsta palavra foi substituida em "+count+" linha(s).");
+                                    System.out.println(" **************************************************************");
+                                    
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                }else {
+                                    System.out.println("***>           Nenhuma ocorrência foi encntrada           <***");
+                                    System.out.println("**************************************************************");
+                                    
+                                    // As duas linhas abaixo ser apenas para pausar a tela até o utilizador primar a tecla enter
+                                    System.out.print("\n\n\nPrima ENTER para continuar...");
+                                    new Scanner(System.in).nextLine();
+                                }
                                 break;
                             case "l":
                                 System.out.println("***\tMOSTRAR O NÚMERO DE LINHAS");
@@ -217,6 +435,7 @@ public class Main {
                         }
                     } while (!menuFerramentas.equalsIgnoreCase("v"));
                     break;
+                }
                 case "s":
                     System.err.println("**************************************************************");
                     System.err.println("**********                            ****             *******");
